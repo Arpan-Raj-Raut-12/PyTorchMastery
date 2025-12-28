@@ -4,9 +4,10 @@ import numpy as np
 from utils import plot_examples
 from PIL import Image
 
-image = Image.open("../../data/images/elon.jpeg")
-mask = Image.open("../../data/images/mask.jpeg")
-mask2 = Image.open("../../data/images/second_mask.jpeg")
+image = cv2.imread("../../data/images/cat.jpg")
+image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+# Manually adding bounding boxes for now.
+bboxes = [[13, 170, 224, 410]]
 
 transform = A.Compose(
     [
@@ -20,19 +21,20 @@ transform = A.Compose(
             A.Blur(blur_limit=3, p=0.5),
             A.ColorJitter(p=0.5),
         ], p=1.0),
-    ]
+    ], bbox_params=A.BboxParams(format="pascal_voc", min_area=2048, min_visibility=0.3, label_fields=[])
 )
 
 images_list = [image]
-image = np.array(image)
-mask = np.array(mask)
-mask2 = np.array(mask2)
-for i in range(4):
-    augmentations = transform(image=image, masks=[mask, mask2])
+saved_bboxes = [bboxes[0]]
+
+for i in range(15):
+    augmentations = transform(image=image, bboxes=bboxes)
     augmented_image = augmentations["image"]
-    augmented_masks = augmentations["masks"]
-    images_list.append(augmented_image)
-    images_list.append(augmented_masks[0])
-    images_list.append(augmented_masks[1])
     
-plot_examples(images_list)
+    if len(augmentations["bboxes"]) == 0:
+        continue
+    
+    images_list.append(augmented_image)
+    saved_bboxes.append(augmentations["bboxes"][0])
+    
+plot_examples(images_list, saved_bboxes)

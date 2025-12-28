@@ -14,15 +14,16 @@ def plot_examples(images, bboxes=None):
     
     for i in range(1, len(images)):
         if bboxes is not None:
-            img = visualize_bbox(images[i - 1], bboxes[i - 1], class_name="Elon")
+            img = visualize_bbox(images[i - 1], bboxes[i - 1])
         else:
             img = images[i - 1]
         fig.add_subplot(rows, columns, i)
         plt.imshow(img)
-        plt.savefig("augmentations.png")
+        
+    plt.savefig("augmentations.png")
             
 def visualize_bbox(img, bbox, color=(255, 0, 0), thickness=5):
     """Visualizes a single bounding box on the image"""
     x_min, y_min, x_max, y_max = map(int, bbox)
-    cv2.rectangles(img, (x_min, y_min), (x_max, y_max), color, thickness)
+    cv2.rectangle(img, (x_min, y_min), (x_max, y_max), color, thickness)
     return img

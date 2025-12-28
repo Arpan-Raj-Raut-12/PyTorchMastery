@@ -30,5 +30,5 @@ for i in range(15):
     augmentations = transform(image=image)
     augmented_img = augmentations["image"]
     images_list.append(augmented_img)
+
 plot_examples(images_list)
-print(len(images_list))
